@@ -55,7 +55,7 @@ class Ledger {
     this.obj[key] = value
   }
 
-  delete (key, value) {
+  delete (key) {
     if (this.#values[key] !== undefined) {
       this.obj[key] = undefined
       delete this.#values[key]
