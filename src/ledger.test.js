@@ -48,12 +48,12 @@ test('Set function determines how to update property', () => {
   expect(ledger.log).toStrictEqual([{ foo: { from: 123, to: 456 } }, { foobar: { from: undefined, to: true } }])
 })
 
-test('Set Property does nothing on existing property', () => {
+test('Set Property updates an existing property', () => {
   const obj = { foo: 123, bar: 'abc' }
   const ledger = new Ledger(obj)
   Ledger.setProperty(ledger, 'foo', 456)
-  expect(ledger.final).toStrictEqual({ foo: 123, bar: 'abc' })
-  expect(ledger.log).toStrictEqual([])
+  expect(ledger.final).toStrictEqual({ foo: 456, bar: 'abc' })
+  expect(ledger.log).toStrictEqual([{ foo: { from: 123, to: 456 } }])
 })
 
 test('Changes to original object do not adjust ledger object', () => {

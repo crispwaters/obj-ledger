@@ -32,5 +32,5 @@ console.log(ledger.final) // => { foo: 456, bar: 'abc', foobar: true }
 
 ### Class Functions
 
-* `setProperty(ledger, property, value)` => Allows a new property to be tracked by the ledger. If an existing property is passed, this function will do nothing
+* `setProperty(ledger, property, value)` => Allows a new property to be tracked by the ledger. If an existing property is passed, the value of the property will be updated
 * `deleteProperty(ledger, property)` => Deletes a property from the underlying object. This property will not be included when `.final` is invoked

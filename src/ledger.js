@@ -3,14 +3,15 @@ class Ledger {
   #logUpdates
 
   static setProperty (ledger, key, value) {
-    if (ledger.obj[key] !== undefined) return
-    Object.defineProperty(ledger.obj, key, {
-      get () { return ledger.#values[key] },
-      set (value) {
-        if (ledger.#logUpdates && value !== ledger.#values[key]) ledger.log.push({ [key]: { from: ledger.#values[key], to: value } })
-        ledger.#values[key] = value
-      }
-    })
+    if (ledger.obj[key] === undefined) {
+      Object.defineProperty(ledger.obj, key, {
+        get () { return ledger.#values[key] },
+        set (value) {
+          if (ledger.#logUpdates && value !== ledger.#values[key]) ledger.log.push({ [key]: { from: ledger.#values[key], to: value } })
+          ledger.#values[key] = value
+        }
+      })
+    }
     ledger.obj[key] = value
   }
 
@@ -43,8 +44,7 @@ class Ledger {
   }
 
   set (key, value) {
-    if (this.obj[key] !== undefined) this.obj[key] = value
-    else Ledger.setProperty(this, key, value)
+    Ledger.setProperty(this, key, value)
   }
 
   update (values) {
