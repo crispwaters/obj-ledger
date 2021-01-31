@@ -1,18 +1,17 @@
 class Ledger {
   #values
-  #logNewProperties
+  #logUpdates
 
   static setProperty (ledger, key, value) {
     if (ledger.obj[key] !== undefined) return
-    if (ledger.#logNewProperties) ledger.log.push({ [key]: { from: ledger.#values[key], to: value } })
-    ledger.#values[key] = value
     Object.defineProperty(ledger.obj, key, {
       get () { return ledger.#values[key] },
       set (value) {
-        if (value !== ledger.#values[key]) ledger.log.push({ [key]: { from: ledger.#values[key], to: value } })
+        if (ledger.#logUpdates && value !== ledger.#values[key]) ledger.log.push({ [key]: { from: ledger.#values[key], to: value } })
         ledger.#values[key] = value
       }
     })
+    ledger.obj[key] = value
   }
 
   static deleteProperty (ledger, key) {
@@ -24,7 +23,7 @@ class Ledger {
 
   constructor (obj) {
     this.#values = {}
-    this.#logNewProperties = false
+    this.#logUpdates = false
     this.log = []
     Object.defineProperty(this, 'original', {
       value: Object.freeze({ ...obj }),
@@ -40,7 +39,7 @@ class Ledger {
     for (const [key, value] of Object.entries(obj)) {
       Ledger.setProperty(this, key, value)
     }
-    this.#logNewProperties = true
+    this.#logUpdates = true
   }
 
   set (key, value) {
@@ -50,14 +49,14 @@ class Ledger {
 
   update (values) {
     const updates = {}
-    this.#logNewProperties = false
+    this.#logUpdates = false
     for (const [key, value] of Object.entries(values)) {
       if (this.#values[key] !== value) updates[key] = { from: this.#values[key], to: value }
       if (this.#values[key] === undefined) Ledger.setProperty(this, key, value)
       this.#values[key] = value
     }
     if (Object.keys(updates).length) this.log.push(updates)
-    this.#logNewProperties = true
+    this.#logUpdates = true
   }
 }
 
