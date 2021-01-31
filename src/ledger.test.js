@@ -8,7 +8,7 @@ test('Ledger records history on object changes', () => {
   ledger.obj.foobar = true
   expect(ledger.final).toStrictEqual({ foo: 456, bar: 'def', foobar: true })
   expect(ledger.log).toStrictEqual([{ foo: { from: 123, to: 456 } }, { bar: { from: 'abc', to: 'def' } }])
-  expect(ledger.audit).toStrictEqual({ foo: [123, 456], bar: ['abc', 'def'], foobar: [true] })
+  expect(ledger.audit).toStrictEqual({ foo: [456], bar: ['def'] })
 })
 
 test('Ledger update method creates single log', () => {
@@ -21,7 +21,7 @@ test('Ledger update method creates single log', () => {
   })
   expect(ledger.final).toStrictEqual({ foo: 456, bar: 'def', foobar: true })
   expect(ledger.log).toStrictEqual([{ foo: { from: 123, to: 456 }, bar: { from: 'abc', to: 'def' }, foobar: { from: undefined, to: true } }])
-  expect(ledger.audit).toStrictEqual({ foo: [123, 456], bar: ['abc', 'def'], foobar: [true] })
+  expect(ledger.audit).toStrictEqual({ foo: [456], bar: ['def'], foobar: [true] })
 })
 
 test('Setting property allows changes to be tracked', () => {
@@ -30,7 +30,7 @@ test('Setting property allows changes to be tracked', () => {
   ledger.set('foobar', true)
   expect(ledger.final).toStrictEqual({ foo: 123, bar: 'abc', foobar: true })
   expect(ledger.log).toStrictEqual([{ foobar: { from: undefined, to: true } }])
-  expect(ledger.audit).toStrictEqual({ foo: [123], bar: ['abc'], foobar: [true] })
+  expect(ledger.audit).toStrictEqual({ foobar: [true] })
 })
 
 test('Deleting property removes it from values', () => {
@@ -39,7 +39,7 @@ test('Deleting property removes it from values', () => {
   ledger.delete('foobar')
   expect(ledger.final).toStrictEqual({ foo: 123, bar: 'abc' })
   expect(ledger.log).toStrictEqual([{ foobar: { from: false, to: undefined } }])
-  expect(ledger.audit).toStrictEqual({ foo: [123], bar: ['abc'], foobar: [false, undefined] })
+  expect(ledger.audit).toStrictEqual({ foobar: [undefined] })
 })
 
 test('Set function determines how to update property', () => {
@@ -50,7 +50,7 @@ test('Set function determines how to update property', () => {
   ledger.set('foobar', true)
   expect(ledger.final).toStrictEqual({ foo: 456, bar: 'abc', foobar: true })
   expect(ledger.log).toStrictEqual([{ foo: { from: 123, to: 456 } }, { foobar: { from: undefined, to: true } }])
-  expect(ledger.audit).toStrictEqual({ foo: [123, 456], bar: ['abc'], foobar: [true] })
+  expect(ledger.audit).toStrictEqual({ foo: [456], foobar: [true] })
 })
 
 test('Set Property updates an existing property', () => {
@@ -59,7 +59,7 @@ test('Set Property updates an existing property', () => {
   ledger.set('foo', 456)
   expect(ledger.final).toStrictEqual({ foo: 456, bar: 'abc' })
   expect(ledger.log).toStrictEqual([{ foo: { from: 123, to: 456 } }])
-  expect(ledger.audit).toStrictEqual({ foo: [123, 456], bar: ['abc'] })
+  expect(ledger.audit).toStrictEqual({ foo: [456] })
 })
 
 test('Changes to original object do not adjust ledger object', () => {
@@ -70,5 +70,5 @@ test('Changes to original object do not adjust ledger object', () => {
   expect(ledger.original).toStrictEqual({ foo: 123, bar: 'abc' })
   expect(ledger.final).toStrictEqual({ foo: 123, bar: 'abc' })
   expect(ledger.log).toStrictEqual([])
-  expect(ledger.audit).toStrictEqual({ foo: [123], bar: ['abc'] })
+  expect(ledger.audit).toStrictEqual({})
 })

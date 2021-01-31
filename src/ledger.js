@@ -3,6 +3,7 @@ class Ledger {
   #logUpdates
   #log
   #audit
+  #initialized
 
   static setProperty (ledger, key, value) {
     if (ledger.obj[key] === undefined) {
@@ -11,8 +12,10 @@ class Ledger {
         set (value) {
           if (value !== ledger.#values[key]) {
             if (ledger.#logUpdates) ledger.#log.push({ [key]: { from: ledger.#values[key], to: value } })
-            if (ledger.#audit[key] === undefined) ledger.#audit[key] = []
-            ledger.#audit[key].push(value)
+            if (ledger.#initialized) {
+              if (ledger.#audit[key] === undefined) ledger.#audit[key] = []
+              ledger.#audit[key].push(value)
+            }
           }
           ledger.#values[key] = value
         }
@@ -31,6 +34,7 @@ class Ledger {
   constructor (obj) {
     this.#values = {}
     this.#logUpdates = false
+    this.#initialized = false
     this.#log = []
     this.#audit = {}
     Object.defineProperty(this, 'log', {
@@ -54,6 +58,7 @@ class Ledger {
       this.set(key, value)
     }
     this.#logUpdates = true
+    this.#initialized = true
   }
 
   set (key, value) {
