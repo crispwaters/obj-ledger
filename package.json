@@ -7,6 +7,7 @@
     "test": "jest"
   },
   "author": "",
+  "repository": "https://github.com/crispwaters/obj-ledger",
   "license": "MIT",
   "devDependencies": {
     "babel-eslint": "^10.1.0",
