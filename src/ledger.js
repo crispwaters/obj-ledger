@@ -5,32 +5,6 @@ class Ledger {
   #audit
   #initialized
 
-  static setProperty (ledger, key, value) {
-    if (ledger.obj[key] === undefined) {
-      Object.defineProperty(ledger.obj, key, {
-        get () { return ledger.#values[key] },
-        set (value) {
-          if (value !== ledger.#values[key]) {
-            if (ledger.#logUpdates) ledger.#log.push({ [key]: { from: ledger.#values[key], to: value } })
-            if (ledger.#initialized) {
-              if (ledger.#audit[key] === undefined) ledger.#audit[key] = []
-              ledger.#audit[key].push(value)
-            }
-          }
-          ledger.#values[key] = value
-        }
-      })
-    }
-    ledger.obj[key] = value
-  }
-
-  static deleteProperty (ledger, key) {
-    if (ledger.#values[key] !== undefined) {
-      ledger.obj[key] = undefined
-      delete ledger.#values[key]
-    }
-  }
-
   constructor (obj) {
     this.#values = {}
     this.#logUpdates = false
@@ -62,11 +36,30 @@ class Ledger {
   }
 
   set (key, value) {
-    Ledger.setProperty(this, key, value)
+    if (this.obj[key] === undefined) {
+      const ledger = this
+      Object.defineProperty(ledger.obj, key, {
+        get () { return ledger.#values[key] },
+        set (value) {
+          if (value !== ledger.#values[key]) {
+            if (ledger.#logUpdates) ledger.#log.push({ [key]: { from: ledger.#values[key], to: value } })
+            if (ledger.#initialized) {
+              if (ledger.#audit[key] === undefined) ledger.#audit[key] = []
+              ledger.#audit[key].push(value)
+            }
+          }
+          ledger.#values[key] = value
+        }
+      })
+    }
+    this.obj[key] = value
   }
 
   delete (key, value) {
-    Ledger.deleteProperty(this, key, value)
+    if (this.#values[key] !== undefined) {
+      this.obj[key] = undefined
+      delete this.#values[key]
+    }
   }
 
   update (values) {
@@ -74,7 +67,7 @@ class Ledger {
     this.#logUpdates = false
     for (const [key, value] of Object.entries(values)) {
       if (this.obj[key] !== value) updates[key] = { from: this.#values[key], to: value }
-      if (this.obj[key] === undefined) Ledger.setProperty(this, key, value)
+      if (this.obj[key] === undefined) this.set(key, value)
       this.obj[key] = value
     }
     if (Object.keys(updates).length) this.#log.push(updates)

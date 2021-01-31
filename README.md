@@ -32,8 +32,3 @@ console.log(ledger.final) // => { foo: 456, bar: 'abc', foobar: true }
 * `update(values)` => Applies updates to the ledger based upon the key/value pairs passed into the function. All updates will be recorded in a single log entry
 * `set(property, value)` => Sets the value of a property. If the property is not currently tracked by the `.obj` property, it will be added and the property can be updated directly in the future
 * `delete(property)` => Deletes the property from the object. In the log and audit objects, the value will be displayed as `undefined`
-
-### Class Functions
-
-* `setProperty(ledger, property, value)` => Allows a new property to be tracked by the ledger. If an existing property is passed, the value of the property will be updated
-* `deleteProperty(ledger, property)` => Deletes a property from the underlying object. This property will not be included when `.final` is invoked
