@@ -24,11 +24,14 @@ console.log(ledger.final) // => { foo: 456, bar: 'abc', foobar: true }
 * `original` => A copy of the original object passed into the ledger. This object is frozen and no updates can be performed
 * `final` => A copy of the object based on all updates that have been performed. This object is frozen and no updates can be performed
 * `obj` => An object that can be used to get and set values that are currently tracked by the ledger.
+* `log` => An array of all changes to the objected in the order the changes occurred.
+* `audit` => An object that shows how the properties on the object has changed. Each property has an array with the first value being the first value set and the last value being the current value.
 
 ### Instance Functions
 
 * `update(values)` => Applies updates to the ledger based upon the key/value pairs passed into the function. All updates will be recorded in a single log entry
 * `set(property, value)` => Sets the value of a property. If the property is not currently tracked by the `.obj` property, it will be added and the property can be updated directly in the future
+* `delete(property)` => Deletes the property from the object. In the log and audit objects, the value will be displayed as `undefined`
 
 ### Class Functions
 
